@@ -1,5 +1,5 @@
 from django.contrib import admin
-from applicants.models import Author,Achievement
+from applicants.models import Author, Achievement
 
 
 # Register your models here.

@@ -8,4 +8,4 @@ router = SimpleRouter()
 router.register(r'achievements', AchievementView, basename='achievements')
 urlpatterns = [
 ]
-urlpatterns += router.urls
+urlpatterns+=router.urls

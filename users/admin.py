@@ -1,7 +1,5 @@
 from django.contrib import admin
-from users.models import ServiceUser
-from rest_framework.authtoken.models import Token
+from users.models import User
 
 # Register your models here.
-admin.site.register(ServiceUser)
-admin.site.register(Token)
+admin.site.register(User)
