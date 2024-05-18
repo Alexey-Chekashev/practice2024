@@ -19,13 +19,16 @@ class SignupView(CreateModelMixin, GenericAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance = User.objects.create(**{**serializer.validated_data|{'password':make_password(serializer.validated_data.get('password'))}})
+        password = serializer.validated_data.get('password')
+        if not password == serializer.initial_data.get('password2'):
+            return Response(data={'detail':'passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
+        instance = User.objects.create(**(serializer.validated_data | {'password': make_password(password)}))
         if instance is not None:
             Token.objects.create(user=instance)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(status=status.HTTP_201_CREATED, headers=headers)
 
 
 
