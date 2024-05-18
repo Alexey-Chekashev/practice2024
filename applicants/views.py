@@ -5,6 +5,7 @@ from django.db.models import F, Q
 from rest_framework import (generics, mixins, response, status, permissions, viewsets)
 from applicants import serializers, models
 from users.auth import BearerTokenAuthentication
+import csv
 # Create your views here.
 
 
@@ -27,12 +28,12 @@ class AchievementView(viewsets.ViewSetMixin, generics.GenericAPIView, mixins.Lis
         return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
+        partial = False
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         old_status = instance.status
-        new_status = serializer.serialized_data.get('status', None)
+        new_status = serializer.validated_data.get('status', None)
         if old_status == 'sent' or new_status is None:
             return response.Response(status=status.HTTP_417_EXPECTATION_FAILED)
         elif old_status == 'saved':
@@ -47,5 +48,6 @@ class AchievementView(viewsets.ViewSetMixin, generics.GenericAPIView, mixins.Lis
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
         return response.Response(serializer.data)
+
 
 

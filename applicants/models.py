@@ -19,7 +19,7 @@ class Achievement(models.Model):
     status_choices = {
         'draft':'черновик',
         'saved':'сохранена',
-        'sent':'отправлена на экспертизу'
+        'sent':'отправлена на экспертизу'#add rejected and approved states
     }
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, blank=True)
     org_address = models.CharField(max_length=200)
@@ -35,7 +35,7 @@ class Achievement(models.Model):
 
     def __str__(self):
         return "%s (%s)" % (
-            self.user,
+            self.id,
             ", ".join(author.last_name for author in self.authors.all()),
         )
 

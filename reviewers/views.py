@@ -18,7 +18,7 @@ class SubmittedView(viewsets.ViewSetMixin, generics.GenericAPIView, mixins.ListM
             return AchievementSerializer
 
     def get_queryset(self):
-        return Achievement.objects.filter(status='sent')
+        return Achievement.objects.filter(status='sent', applicationvote__isnull=True)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
