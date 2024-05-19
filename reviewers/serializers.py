@@ -6,3 +6,6 @@ class VoteSerializer(ModelSerializer):
     class Meta:
         model = ApplicationVote
         fields = ['approved', 'application']
+
+
+

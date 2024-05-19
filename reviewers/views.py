@@ -26,6 +26,3 @@ class SubmittedView(viewsets.ViewSetMixin, generics.GenericAPIView, mixins.ListM
         serializer.save(reviewer=request.user)
         headers = self.get_success_headers(serializer.data)
         return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-

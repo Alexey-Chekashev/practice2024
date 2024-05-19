@@ -47,5 +47,3 @@ class AchievementSerializer(ModelSerializer):
             setattr(instance, key, val)
         instance.save()
         return instance
-
-

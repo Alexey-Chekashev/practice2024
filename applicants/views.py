@@ -48,6 +48,3 @@ class AchievementView(viewsets.ViewSetMixin, generics.GenericAPIView, mixins.Lis
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
         return response.Response(serializer.data)
-
-
-

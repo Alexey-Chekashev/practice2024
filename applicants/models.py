@@ -12,6 +12,9 @@ class Author(models.Model):
     last_name = models.CharField(max_length=50)
     degree = models.CharField(max_length=50)
 
+    def csv_representation(self):
+        return '{'+f'''"{self.order_number}","{self.first_name}","{self.middle_name}","{self.last_name}","{self.degree}"'''+'}'
+
 
 class Achievement(models.Model):
     class Meta:
@@ -33,10 +36,6 @@ class Achievement(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     sent = models.DateTimeField(blank=True, null=True)
 
-    def __str__(self):
-        return "%s (%s)" % (
-            self.id,
-            ", ".join(author.last_name for author in self.authors.all()),
-        )
-
+    def csv_representation(self):
+        return '{' + f'''"{self.user.username}","{self.user.email}"''' + '},' + f'''"{self.org_address}","{self.org_phone}","{self.org_email}","{self.research_goal}","{self.relevance}","{self.expected_results}"'''
 

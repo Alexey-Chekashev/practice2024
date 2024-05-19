@@ -9,5 +9,3 @@ router.register(r'submissions', SubmittedView, basename='submissions')
 urlpatterns = [
 ]
 urlpatterns += router.urls
-
-
