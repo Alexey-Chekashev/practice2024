@@ -1,11 +1,9 @@
-from django.urls import path, include
+from django.urls import path
 from reviewers.views import SubmittedView
-from rest_framework.routers import SimpleRouter
 
 
 app_name = 'reviewers'
-router = SimpleRouter()
-router.register(r'submissions', SubmittedView, basename='submissions')
 urlpatterns = [
+    path('submissions/', SubmittedView.as_view()),
+    path('submissions/<int:pk>/', SubmittedView.as_view())
 ]
-urlpatterns += router.urls

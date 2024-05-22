@@ -5,7 +5,7 @@ from reviewers.models import ApplicationVote
 class VoteSerializer(ModelSerializer):
     class Meta:
         model = ApplicationVote
-        fields = ['approved', 'application']
+        fields = ['approved']
 
 
 

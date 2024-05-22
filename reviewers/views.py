@@ -1,28 +1,32 @@
-from django.shortcuts import render, get_object_or_404
-from rest_framework import generics, mixins, response, status, viewsets
-from reviewers import permissions, serializers, models
+from rest_framework import generics, mixins, response, status
+from reviewers import permissions, serializers
 from applicants.models import Achievement
 from applicants.serializers import AchievementSerializer
 from users.auth import BearerTokenAuthentication
 
 
-class SubmittedView(viewsets.ViewSetMixin, generics.GenericAPIView, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                    mixins.CreateModelMixin):
+class SubmittedView(generics.GenericAPIView, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     permission_classes = [permissions.ReviewerPermission,]
     authentication_classes = [BearerTokenAuthentication,]
 
     def get_serializer_class(self):
-        if self.request.method.lower() == "post":
+        if self.request.method.lower() == "put":
             return serializers.VoteSerializer
         else:
             return AchievementSerializer
 
     def get_queryset(self):
-        return Achievement.objects.filter(status='sent', applicationvote__isnull=True)
+        return Achievement.objects.filter(status='sent', applicationvote__isnull=True).order_by('-sent')
 
-    def create(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        if kwargs.get('pk', None) is not None:
+            return self.retrieve(self, request, *args, **kwargs)
+        else:
+            return self.list(self, request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(reviewer=request.user)
-        headers = self.get_success_headers(serializer.data)
-        return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        serializer.save(reviewer=request.user, application=instance)
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED)

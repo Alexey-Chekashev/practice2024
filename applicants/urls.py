@@ -1,11 +1,10 @@
-from django.urls import path, include
-from applicants.views import AchievementView
-from rest_framework.routers import SimpleRouter
+from django.urls import path
+from applicants.views import AchievementView, AuthorView
 
 
 app_name = 'applicants'
-router = SimpleRouter()
-router.register(r'achievements', AchievementView, basename='achievements')
 urlpatterns = [
+    path('achievements/', AchievementView.as_view()),
+    path('achievements/<int:pk>/', AchievementView.as_view()),
+    path('authors/', AuthorView.as_view())
 ]
-urlpatterns+=router.urls
