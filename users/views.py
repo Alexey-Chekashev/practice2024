@@ -13,14 +13,11 @@ class SignupView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        password = serializer.validated_data.get('password')
+        password = serializer.validated_data.pop('password')
         if not password == serializer.initial_data.get('password2'):
             return response.Response(data={'detail':'passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
         instance = models.User.objects.create(**(serializer.validated_data | {'password': make_password(password)}))
-        if instance is not None:
-            Token.objects.create(user=instance)
-        else:
-            return response.Response(status=status.HTTP_400_BAD_REQUEST)
+        Token.objects.create(user=instance)
         headers = self.get_success_headers(serializer.data)
         return response.Response(status=status.HTTP_201_CREATED, headers=headers)
 
