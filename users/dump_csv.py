@@ -1,13 +1,12 @@
 from applicants.models import Achievement
 import datetime
-import csv
 
 
 def dump_csv(option):
-    fields = [ 'voted_user', 'user', 'org_address', 'org_phone', 'org_email', 'research_goal', 'relevance', 'expected_results',
-              'authors']
+    fields = [ 'reviewer_id', 'user_id', 'org_address', 'org_phone', 'org_email', 'research_goal', 'relevance',
+               'expected_results', 'authors']
     reviewed = Achievement.objects.filter(applicationvote__approved=option).prefetch_related(
-        'applicationvote_set', 'author_set').order_by('-sent').select_related('user')
+        'applicationvote_set', 'author_set').order_by('-sent')
     option = "approved" if option else "rejected"
     filename = f"csvs\\{option}_achievements_{str(datetime.datetime.now()).replace(':', '_')}.csv"
     with open(filename, 'w+') as file:
@@ -18,8 +17,6 @@ def dump_csv(option):
             for author in authors:
                 authors_csv = authors_csv + author.csv_representation() + ","
             authors_csv = authors_csv[:-1] + '"'
-            vote = inst.applicationvote_set.first()
-            voted_by = vote.reviewer.username
-            inst_csv = f"{inst.org_address},{inst.org_phone},{inst.org_email},{inst.research_goal},{inst.relevance},{inst.expected_results}"
-            file.write(voted_by + ',' + inst.user.username + ',' + inst_csv + ',' + authors_csv + '\n')
+            voted_by = inst.applicationvote_set.first().reviewer
+            file.write(f'{voted_by},{inst.user},{inst.csv_representation()},{authors_csv}\n')
     return filename

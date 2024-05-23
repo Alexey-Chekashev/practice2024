@@ -33,28 +33,15 @@ class AchievementView(generics.GenericAPIView, mixins.ListModelMixin, mixins.Ret
         serializer.is_valid(raise_exception=True)
         old_status = instance.status
         new_status = serializer.validated_data.get('status', None)
-        if old_status == 'sent':
+        if old_status == 'sent':  # нельзя менять, если отправлено
             return response.Response(status=status.HTTP_417_EXPECTATION_FAILED,data={"detail":"can't update sent"})
-        elif old_status == 'saved':
-            if new_status is None or len(serializer.validated_data)>1:
-                return response.Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": "only status can be updated"})
-            else:
-                new_serializer = serializers.AchievementSerializer(data={'status': new_status})
-                new_serializer.update(instance, {'status': new_status})
-                return response.Response(data={'status': new_status})
+        elif old_status == 'saved':  # можно обновлять только статус
+            new_serializer = serializers.AchievementSerializer(data={'status': new_status})
+            new_serializer.update(instance, {'status': new_status})
+            return response.Response(data={'status': new_status})
         else:
             serializer.update(instance, serializer.validated_data)
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
         return response.Response(serializer.data)
 
-    def patch(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-        return self.put(request, *args, **kwargs)
-
-
-class AuthorView(generics.ListAPIView):
-    queryset = models.Author.objects.all().order_by('order_number')
-    permission_classes = [permissions.IsAdminUser,]
-    authentication_classes = [BearerTokenAuthentication,]
-    serializer_class = serializers.AuthorSerializer

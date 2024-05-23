@@ -11,10 +11,4 @@ class UserSerializer(ModelSerializer):
         fields = ['first_name', 'last_name', 'email', 'username', 'password']
 
 
-class UserViewSerializer(ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'username']
-
 

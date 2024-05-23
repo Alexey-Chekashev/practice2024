@@ -1,6 +1,4 @@
 import copy
-from codecs import IncrementalDecoder
-
 from rest_framework.serializers import ModelSerializer
 from applicants.models import Achievement, Author
 
@@ -34,20 +32,21 @@ class AchievementSerializer(ModelSerializer):
     def update(self, instance, new_data):
         validated_data = copy.deepcopy(new_data)
         authors_data = validated_data.pop('author_set', None)
-        authors = instance.author_set.all()
-        order = authors.count()+1
-        for author in authors:
-            try:
-                author_data = authors_data[0]
-                del authors_data[0]
-                for key, value in author_data.items():
-                    setattr(author, key, value)
-                author.save()
-            except IndexError:
-                author.delete()
-        for data in authors_data:
-            Author.objects.create(**(data | {"order_number": order, "achievement": instance}))
-            order += 1
+        if authors_data is not None:  # в случае если обновляется только статус, не обновлять авторов
+            authors = instance.author_set.all()
+            order = authors.count()+1
+            for author in authors:
+                try:
+                    author_data = authors_data[0]
+                    del authors_data[0]
+                    for key, value in author_data.items():
+                        setattr(author, key, value)
+                    author.save()
+                except IndexError:
+                    author.delete()
+            for data in authors_data:
+                Author.objects.create(**(data | {"order_number": order, "achievement": instance}))
+                order += 1
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
