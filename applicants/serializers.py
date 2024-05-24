@@ -6,7 +6,7 @@ from applicants.models import Achievement, Author
 class AuthorSerializer(ModelSerializer):
     class Meta:
         model = Author
-        fields = ['id', 'order_number', 'first_name', 'middle_name', 'last_name', 'degree']
+        fields = ['first_name', 'middle_name', 'last_name', 'degree']
 
 
 class AchievementSerializer(ModelSerializer):

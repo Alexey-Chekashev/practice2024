@@ -1,0 +1,3 @@
+reviewer_id|user_id|org_address|org_phone|org_email|research_goal|relevance|expected_results|created|authors
+2|13|common_user_1cc|user_1cc|commonuser1cc@commonuser1cc.com|common_user_1cc|common_user_1cc|common_user_1cc|2024-05-24 00:36:56.571398+00:00|"author1,author1,author1","author2,author2,author2"
+1|1|2|21|2@2.com|2|2|2|2024-05-21 22:50:36.400456+00:00|"2,2,2","2,2,2"

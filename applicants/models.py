@@ -22,8 +22,8 @@ class Achievement(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     sent = models.DateTimeField(auto_now=True)
 
-    def csv_representation(self):
-        return f'"{self.user}","{self.org_address}","{self.org_phone}","{self.org_email}","{self.research_goal}","{self.relevance}","{self.expected_results}"'
+    # def csv_representation(self):
+    #     return f'"{self.user_id}","{self.org_address}","{self.org_phone}","{self.org_email}","{self.research_goal}","{self.relevance}","{self.expected_results}"'
 
     class Meta:
         indexes = [
@@ -44,6 +44,6 @@ class Author(models.Model):
             models.Index(fields=['order_number'])
         ]
 
-    def csv_representation(self):
-        return f'"{self.first_name},{self.middle_name},{self.last_name}"'
+    # def csv_representation(self):
+    #     return f'"{self.last_name},{self.first_name},{self.middle_name}"'
 

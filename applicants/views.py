@@ -22,7 +22,7 @@ class AchievementView(generics.GenericAPIView, mixins.ListModelMixin, mixins.Ret
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         if not models.Achievement.objects.filter(user=request.user, created__year=timezone.now().year).count() < 5:
-            return response.Response(status=status.HTTP_417_EXPECTATION_FAILED)
+            return response.Response(status=status.HTTP_417_EXPECTATION_FAILED, data={"detail":"only 5 or less per year"})
         serializer.create(serializer.validated_data | {'user': request.user})
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
