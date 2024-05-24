@@ -2,7 +2,6 @@ from rest_framework import generics, response, status, permissions
 from rest_framework.authtoken.models import Token
 from users import serializers, permissions as user_permissions, auth, dump_csv, models
 from django.contrib.auth.hashers import make_password
-from reviewers.serializers import VoteSerializer
 from django.http import FileResponse
 
 
@@ -26,13 +25,9 @@ class SignupView(generics.CreateAPIView):
 class DumpCSVView(generics.GenericAPIView):
     permission_classes = [permissions.IsAdminUser,]
     authentication_classes = [auth.BearerTokenAuthentication,]
-    serializer_class = VoteSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        option = serializer.validated_data.get('approved')
-        filename = dump_csv.dump_csv(option)
+        filename = dump_csv.get_zip()
         return FileResponse(open(filename, 'rb'))
 
 

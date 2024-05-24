@@ -3,6 +3,7 @@ import datetime
 import csv
 from applicants.models import Author
 from reviewers.models import ApplicationVote
+import zipfile, os
 
 
 # def dump_csv2(option):
@@ -31,7 +32,7 @@ def dump_csv(option):
     fields = ['user','org_address','org_phone','org_email','research_goal', 'relevance','expected_results', 'created']
     reviewed = Achievement.objects.filter(applicationvote__approved=option).order_by('-sent').values_list(*(['id']+fields))
     option = "approved" if option else "rejected"
-    filename = f"csvs\\test_{option}_achievements_{str(datetime.datetime.now()).replace(':', '_')}.csv"
+    filename = f"csvs\\{option}_achievements_{str(datetime.datetime.now()).replace(':', '_')}.csv"
     # before = time.perf_counter_ns()
     with open(filename, 'w+', newline='') as file:
         writer = csv.writer(file, delimiter='|', quotechar='', escapechar='\\', quoting=csv.QUOTE_NONE)
@@ -49,3 +50,14 @@ def dump_csv(option):
     # print(time.perf_counter_ns() - before)
     return filename
 
+
+def get_zip():
+    filename = f"csvs\\achievements_{str(datetime.datetime.now()).replace(':', '_')}.zip"
+    f1 = dump_csv(True)
+    f2 = dump_csv(False)
+    with zipfile.ZipFile(filename, 'x') as archive:
+        archive.write(f1)
+        archive.write(f2)
+        os.remove(f1)
+        os.remove(f2)
+    return filename
