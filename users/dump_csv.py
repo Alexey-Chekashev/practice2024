@@ -28,9 +28,9 @@ import zipfile, os
 #     return filename
 
 
-def dump_csv(option):
+def dump_csv(option, queryset):
     fields = ['user','org_address','org_phone','org_email','research_goal', 'relevance','expected_results', 'created']
-    reviewed = Achievement.objects.filter(applicationvote__approved=option).order_by('-sent').values_list(*(['id']+fields))
+    reviewed = queryset.values_list(*(['id']+fields))
     option = "approved" if option else "rejected"
     filename = f"csvs\\{option}_achievements_{str(datetime.datetime.now()).replace(':', '_')}.csv"
     # before = time.perf_counter_ns()
@@ -53,8 +53,9 @@ def dump_csv(option):
 
 def get_zip():
     filename = f"csvs\\achievements_{str(datetime.datetime.now()).replace(':', '_')}.zip"
-    f1 = dump_csv(True)
-    f2 = dump_csv(False)
+    reviewed = Achievement.objects.filter(applicationvote__approved__isnull=False).order_by('-sent')
+    f1 = dump_csv(True, reviewed.filter(applicationvote__approved=True))
+    f2 = dump_csv(False, reviewed.filter(applicationvote__approved=False))
     with zipfile.ZipFile(filename, 'x') as archive:
         archive.write(f1)
         archive.write(f2)
